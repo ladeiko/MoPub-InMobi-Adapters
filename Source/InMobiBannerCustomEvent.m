@@ -18,9 +18,10 @@
 #import "InMobiSDKInitialiser.h"
 
 #import <InMobiSDK/IMSdk.h>
+#import <InMobiSDK/IMBanner.h>
 #import "InMobyAdapterUtils.h"
 
-@interface InMobiBannerCustomEvent () <CLLocationManagerDelegate>
+@interface InMobiBannerCustomEvent () <CLLocationManagerDelegate, IMBannerDelegate>
 
 
 @property (nonatomic, strong) IMBanner *bannerAd;
@@ -41,7 +42,8 @@
         long long placementId = [caseInSensitiveGet(info, kIMPlacementID) longLongValue];
         if(placementId <= 0) {
             NSError* error = [NSError errorWithDomain:kIMErrorDomain code:kIMIncorrectPlacemetID userInfo:@{NSLocalizedDescriptionKey: @"Inmobi's adapter failed to initialize because of invalid or empty PlacementId." }];
-            [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+            [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+//            [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
             return;
         }
         RUN_SYNC_ON_MAIN_THREAD(self.bannerAd = [[IMBanner alloc] initWithFrame:frame placementId:placementId];
@@ -76,7 +78,8 @@
         [InMobiSDKInitialiser initialiseSdkWithInfo:info withCompletion:^(NSError *error) {
             if(error) {
                 MPLogInfo(@"Inmobi's adapter failed to initialise with error:%@. kindly pass correct accountID",error);
-                [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
+                [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+//                [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
                 return;
             }
             action();
@@ -97,28 +100,34 @@
 
 -(void)bannerDidFinishLoading:(IMBanner*)banner {
     MPLogEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate trackImpression];
-    [self.delegate bannerCustomEvent:self didLoadAd:banner];
+    [self.delegate inlineAdAdapterDidTrackImpression:self];
+//    [self.delegate trackImpression];
+    [self.delegate inlineAdAdapter:self didLoadAdWithAdView:banner];
+//    [self.delegate bannerCustomEvent:self didLoadAd:banner];
 }
 
 -(void)banner:(IMBanner*)banner didFailToLoadWithError:(IMRequestStatus*)error {
     MPLogEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error]);
-    [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
+    [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+//    [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
 }
 
 -(void)banner:(IMBanner*)banner didInteractWithParams:(NSDictionary*)params {
     MPLogEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate trackClick];
+//    [self.delegate trackClick];
+    [self.delegate inlineAdAdapterDidTrackClick:self];
 }
 
 -(void)userWillLeaveApplicationFromBanner:(IMBanner*)banner {
     MPLogEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate bannerCustomEventWillLeaveApplication:self];
+    [self.delegate inlineAdAdapterWillLeaveApplication:self];
+//    [self.delegate bannerCustomEventWillLeaveApplication:self];
 }
 
 -(void)bannerWillPresentScreen:(IMBanner*)banner {
     MPLogEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate bannerCustomEventWillBeginAction:self];
+    [self.delegate inlineAdAdapterWillBeginUserAction:self];
+//    [self.delegate bannerCustomEventWillBeginAction:self];
 }
 
 -(void)bannerDidPresentScreen:(IMBanner*)banner {
@@ -131,7 +140,8 @@
 
 -(void)bannerDidDismissScreen:(IMBanner*)banner {
     MPLogEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate bannerCustomEventDidFinishAction:self];
+//    [self.delegate bannerCustomEventDidFinishAction:self];
+    [self.delegate inlineAdAdapterDidEndUserAction:self];
 }
 
 -(void)banner:(IMBanner*)banner rewardActionCompletedWithRewards:(NSDictionary*)rewards {

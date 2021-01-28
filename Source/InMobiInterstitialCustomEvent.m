@@ -16,12 +16,13 @@
 #endif
 
 #import <InMobiSDK/IMSdk.h>
+#import <InMobiSDK/IMInterstitial.h>
 
 #import "InMobiGDPR.h"
 #import "InMobiSDKInitialiser.h"
 #import "InMobyAdapterUtils.h"
 
-@interface InMobiInterstitialCustomEvent ()
+@interface InMobiInterstitialCustomEvent () <IMInterstitialDelegate>
 
 @property (nonatomic, strong) IMInterstitial *interstitialAd;
 
@@ -38,7 +39,8 @@
         long long placementId = [caseInSensitiveGet(info, kIMPlacementID) longLongValue];
         if(placementId <= 0) {
             NSError* error = [NSError errorWithDomain:kIMErrorDomain code:kIMIncorrectPlacemetID userInfo:@{NSLocalizedDescriptionKey: @"Intestitial initialization skipped. The placementID is incorrect." }];
-            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+//            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
             return;
         }
         self.interstitialAd = [[IMInterstitial alloc] initWithPlacementId:placementId];
@@ -71,7 +73,8 @@
         [InMobiSDKInitialiser initialiseSdkWithInfo:info withCompletion:^(NSError *error) {
             if(error) {
                 MPLogInfo(@"Inmobi's adapter failed to initialise with error:%@. kindly pass correct accountID",error);
-                [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
+                [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+//                [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
                 return;
             }
             action();
@@ -87,11 +90,21 @@
     [self.interstitialAd showFromViewController:rootViewController withAnimation:kIMInterstitialAnimationTypeCoverVertical];
 }
 
+- (BOOL)isRewardExpected
+{
+    return NO;
+}
+
+- (BOOL)enableAutomaticImpressionAndClickTracking {
+    return NO;
+}
+
 #pragma mark - IMInterstitialDelegate
 
 -(void)interstitialDidFinishLoading:(IMInterstitial*)interstitial {
     MPLogEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate interstitialCustomEvent:self didLoadAd:interstitial];
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
+//    [self.delegate interstitialCustomEvent:self didLoadAd:interstitial];
 }
 
 -(void)interstitialDidReceiveAd:(IMInterstitial *)interstitial{
@@ -100,38 +113,46 @@
 
 -(void)interstitial:(IMInterstitial*)interstitial didFailToLoadWithError:(IMRequestStatus*)error {
     MPLogEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error]);
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+//    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
 }
 
 -(void)interstitialWillPresent:(IMInterstitial*)interstitial {
     MPLogEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate interstitialCustomEventWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+//    [self.delegate interstitialCustomEventWillAppear:self];
 }
 
 -(void)interstitialDidPresent:(IMInterstitial *)interstitial {
     MPLogEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate trackImpression];
-    [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+    //[self.delegate trackImpression];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+//    [self.delegate interstitialCustomEventDidAppear:self];
 }
 
 -(void)interstitial:(IMInterstitial*)interstitial didFailToPresentWithError:(IMRequestStatus*)error {
     MPLogEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error]);
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+//    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:(NSError *)error];
 }
 
 -(void)interstitialWillDismiss:(IMInterstitial*)interstitial {
     MPLogEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate interstitialCustomEventWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
+//    [self.delegate interstitialCustomEventWillDisappear:self];
 }
 
 -(void)interstitialDidDismiss:(IMInterstitial*)interstitial {
     MPLogEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate interstitialCustomEventDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+//    [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
 -(void)interstitial:(IMInterstitial*)interstitial didInteractWithParams:(NSDictionary*)params {
     MPLogEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+//    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
 }
 
 -(void)interstitial:(IMInterstitial*)interstitial rewardActionCompletedWithRewards:(NSDictionary*)rewards {
@@ -142,7 +163,8 @@
 
 -(void)userWillLeaveApplicationFromInterstitial:(IMInterstitial*)interstitial {
     MPLogEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)]);
-    [self.delegate interstitialCustomEventWillLeaveApplication:self];
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
+//    [self.delegate interstitialCustomEventWillLeaveApplication:self];
 }
 
 @end

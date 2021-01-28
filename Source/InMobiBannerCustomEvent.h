@@ -8,11 +8,9 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPBannerCustomEvent.h"
+    #import "MPInlineAdAdapter.h"
 #endif
 
-#import <InMobiSDK/IMBanner.h>
-
-@interface InMobiBannerCustomEvent : MPBannerCustomEvent <IMBannerDelegate>
+@interface InMobiBannerCustomEvent : MPInlineAdAdapter <MPThirdPartyInlineAdAdapter>
 
 @end
