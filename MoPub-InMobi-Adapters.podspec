@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name = "MoPub-InMobi-Adapters"
   s.module_name = "MoPub_InMobi_Adapters"
-  s.version = "2.0.0"
+  s.version = "2.0.1"
   s.summary = "MoPub adapter for InMobi network"
   s.homepage = "https://github.com/ladeiko/MoPub-InMobi-Adapters"
   s.license = "MIT"
