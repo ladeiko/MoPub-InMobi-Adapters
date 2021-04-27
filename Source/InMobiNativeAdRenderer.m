@@ -6,24 +6,11 @@
 //
 
 #import "InMobiNativeAdRenderer.h"
-
-#import <InMobiSDK/IMSdk.h>
-#if __has_include("MoPub.h")
-#import "MPLogging.h"
-#import "MPNativeAdAdapter.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdRendererConfiguration.h"
-#import "MPNativeAdRendering.h"
-#import "MPNativeAdRenderingImageLoader.h"
-#import "MPNativeView.h"
-#import "MPStaticNativeAdRendererSettings.h"
-#import "MPURLRequest.h"
-#import "MPHTTPNetworkSession.h"
-#import "MPMemoryCache.h"
-#endif
 #import "InMobiNativeAdAdapter.h"
+#import <objc/message.h>
 
+@import InMobiSDK;
+@import MoPubSDK;
 
 @interface InMobiNativeAdRenderer ()
 
@@ -121,11 +108,13 @@
        UIView *iconImageView = [self.adView nativeIconImageView];
        iconImageView.userInteractionEnabled = YES;
    }
-   
-   if ([self.adView respondsToSelector:@selector(nativeVideoView)]) {
+
+   const SEL nativeVideoViewSel = NSSelectorFromString(@"nativeVideoView");
+   if ([self.adView respondsToSelector:nativeVideoViewSel]) {
        UIView *mediaView = [adapter.properties objectForKey:kVASTVideoKey];
-       UIView *videoView = [self.adView performSelector:@selector(nativeVideoView)];
-       
+       UIView* (*nativeVideoViewFunc)(id, SEL) = (UIView*(*)(id,SEL))objc_msgSend;
+       UIView* const videoView = nativeVideoViewFunc(self.adView, nativeVideoViewSel);
+
        mediaView.frame = videoView.bounds;
        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
        mediaView.userInteractionEnabled = YES;

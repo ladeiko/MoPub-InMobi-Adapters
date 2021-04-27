@@ -107,7 +107,7 @@
 //    [self.delegate interstitialCustomEvent:self didLoadAd:interstitial];
 }
 
--(void)interstitialDidReceiveAd:(IMInterstitial *)interstitial{
+- (void)interstitial:(IMInterstitial *)interstitial didReceiveWithMetaInfo:(IMAdMetaInfo *)metaInfo {
     MPLogInfo(@"[InMobi] InMobi Ad Server responded with an Interstitial ad");
 }
 

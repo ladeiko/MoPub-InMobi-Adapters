@@ -3,16 +3,12 @@
 //  InMobiMoPubSampleApp
 //
 //  Created by Iti Agrawal on 11/09/19.
+//  Updated by Siarhei Ladzeika
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include(<MoPub/MoPub.h>)
-#import <MoPub/MoPub.h>
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
-#else
-#import "MPBaseAdapterConfiguration.h"
-#endif
+
+@import MoPubSDK;
 
 NS_ASSUME_NONNULL_BEGIN
 

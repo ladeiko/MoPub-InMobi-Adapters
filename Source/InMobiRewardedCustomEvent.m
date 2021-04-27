@@ -7,23 +7,12 @@
 
 #import <Foundation/Foundation.h>
 #import "InMobiRewardedCustomEvent.h"
-#if __has_include(<MoPub/MoPub.h>)
-    #import <MoPub/MoPub.h>
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MoPub.h>
-#else
-    #import "MPLogging.h"
-    #import "MPRewardedVideoReward.h"
-    #import "MPRewardedVideoError.h"
-    #import "MPConstants.h"
-#endif
-
-#import <InMobiSDK/IMSdk.h>
-#import <InMobiSDK/IMInterstitial.h>
-
 #import "InMobiGDPR.h"
 #import "InMobiSDKInitialiser.h"
 #import "InMobyAdapterUtils.h"
+
+@import MoPubSDK;
+@import InMobiSDK;
 
 @interface InMobiRewardedCustomEvent ()<IMInterstitialDelegate>
 
@@ -105,7 +94,7 @@
         [self.interstitialAd showFromViewController:viewController withAnimation:kIMInterstitialAnimationTypeCoverVertical];
     }
     else {
-         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
+         NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 //         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
     }
@@ -127,7 +116,7 @@
 //    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
 }
 
--(void)interstitialDidReceiveAd:(IMInterstitial *)interstitial{
+- (void)interstitial:(IMInterstitial *)interstitial didReceiveWithMetaInfo:(IMAdMetaInfo *)metaInfo {
     MPLogInfo(@"[InMobi] InMobi Ad Server responded with an Rewarded Interstitial ad");
 }
 
@@ -176,7 +165,7 @@
 -(void)interstitial:(IMInterstitial*)interstitial rewardActionCompletedWithRewards:(NSDictionary*)rewards {
     if(rewards!=nil){
         MPLogInfo(@"InMobi reward action completed with rewards: %@", [rewards description]);
-        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc]initWithCurrencyType:kMPRewardCurrencyTypeUnspecified amount:[rewards allValues][0]];
+        MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardCurrencyTypeUnspecified amount:[rewards allValues][0]];
         [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 //        [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:(MPRewardedVideoReward*)reward];
     }

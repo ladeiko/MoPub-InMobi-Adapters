@@ -8,13 +8,10 @@
 
 #import "InMobiAdapterConfiguration.h"
 #import "InMobiSDKInitialiser.h"
-#if __has_include("MoPub.h")
-    #import "MPLogging.h"
-    #import "MPConstants.h"
-#endif
-
-#import <InMobiSDK/IMSdk.h>
 #import "InMobyAdapterUtils.h"
+
+@import MoPubSDK;
+@import InMobiSDK;
 
 #define InMobiMopubAdapterVersion @"1.0.0"
 #define MopubNetworkName @"inmobi"
