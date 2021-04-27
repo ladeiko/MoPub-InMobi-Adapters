@@ -124,7 +124,7 @@
    
    if ([self.adView respondsToSelector:@selector(nativeVideoView)]) {
        UIView *mediaView = [adapter.properties objectForKey:kVASTVideoKey];
-       UIView *videoView = [self.adView nativeVideoView];
+       UIView *videoView = [self.adView performSelector:@selector(nativeVideoView)];
        
        mediaView.frame = videoView.bounds;
        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
